@@ -1,12 +1,15 @@
 ---
+/**
+ * Provides site navigation and persistent accessibility display controls.
+ */
 import Menu from '../assets/icons/menu.svg';
 ---
 
-<header class="bg-blue-500 dark:bg-blue-700 text-white p-4 shadow-md transition-colors duration-300">
+<header class="bg-blue-700 dark:bg-blue-800 text-white p-4 shadow-md transition-colors duration-300">
   <div class="container mx-auto flex justify-between items-center pl-4 pr-4">
     <div class="flex items-center">
       <div class="relative group">
-        <button id="menu-toggle" class="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500 rounded mr-4" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
+        <button id="menu-toggle" class="focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-700 dark:focus:ring-offset-blue-800 rounded mr-4" aria-label="Toggle menu" aria-expanded="false" aria-controls="menu">
           <Menu class="h-6 w-6" aria-hidden="true" />
         </button>
         <nav id="menu" aria-label="Main" class="hidden absolute left-0 mt-2 w-48 bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded shadow-lg z-10 transition-colors duration-300">
@@ -18,6 +21,15 @@ import Menu from '../assets/icons/menu.svg';
       </div>
       <div class="text-xl font-bold"><a href="/" class="hover:underline">Tailspin Toys</a></div>
     </div>
+    <button
+      type="button"
+      id="high-contrast-toggle"
+      class="rounded-lg border border-white/60 px-3 py-2 text-sm font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-700"
+      aria-pressed="false"
+      data-testid="high-contrast-toggle"
+    >
+      High contrast
+    </button>
   </div>
 </header>
 
@@ -53,6 +65,31 @@ import Menu from '../assets/icons/menu.svg';
         menu.classList.add('hidden');
         menuToggle.setAttribute('aria-expanded', 'false');
         menuToggle.focus();
+      }
+    });
+  }
+
+  const highContrastToggle = document.getElementById('high-contrast-toggle');
+  const highContrastStorageKey = 'tailspin-high-contrast';
+
+  if (highContrastToggle) {
+    const updateHighContrastToggle = (enabled: boolean): void => {
+      highContrastToggle.setAttribute('aria-pressed', String(enabled));
+      highContrastToggle.textContent = enabled ? 'Standard contrast' : 'High contrast';
+    };
+
+    let highContrastEnabled = document.documentElement.classList.contains('high-contrast');
+    updateHighContrastToggle(highContrastEnabled);
+
+    highContrastToggle.addEventListener('click', () => {
+      highContrastEnabled = !highContrastEnabled;
+      document.documentElement.classList.toggle('high-contrast', highContrastEnabled);
+      updateHighContrastToggle(highContrastEnabled);
+
+      try {
+        localStorage.setItem(highContrastStorageKey, String(highContrastEnabled));
+      } catch (error) {
+        console.warn('High-contrast preference could not be saved.', error);
       }
     });
   }

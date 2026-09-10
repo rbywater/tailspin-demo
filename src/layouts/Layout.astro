@@ -1,4 +1,7 @@
 ---
+/**
+ * Provides the shared page shell, document metadata, and accessibility theme handling.
+ */
 import Header from "../components/Header.astro"
 import "../styles/global.css"
 
@@ -21,6 +24,16 @@ const { title = "Tailspin Toys" } = Astro.props;
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+        <script is:inline>
+            const highContrastStorageKey = 'tailspin-high-contrast';
+            try {
+                if (localStorage.getItem(highContrastStorageKey) === 'true') {
+                    document.documentElement.classList.add('high-contrast');
+                }
+            } catch (error) {
+                console.warn('High-contrast preference could not be restored.', error);
+            }
+        </script>
     </head>
     <body class="min-h-screen bg-slate-900 text-white transition-colors duration-300 m-0 w-full h-full font-sans">
         <Header />
@@ -45,5 +58,55 @@ const { title = "Tailspin Toys" } = Astro.props;
     body {
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+    }
+
+    html.high-contrast body {
+        background-color: #000 !important;
+        color: #fff !important;
+    }
+
+    html.high-contrast header {
+        background-color: #000 !important;
+        border-bottom: 2px solid #fff;
+    }
+
+    html.high-contrast a,
+    html.high-contrast button,
+    html.high-contrast h1,
+    html.high-contrast h2,
+    html.high-contrast h3,
+    html.high-contrast label,
+    html.high-contrast legend,
+    html.high-contrast p,
+    html.high-contrast select,
+    html.high-contrast option {
+        color: #fff !important;
+    }
+
+    html.high-contrast a:focus,
+    html.high-contrast button:focus,
+    html.high-contrast input:focus,
+    html.high-contrast select:focus {
+        outline: 3px solid #ff0 !important;
+        outline-offset: 2px;
+        box-shadow: none !important;
+    }
+
+    html.high-contrast nav,
+    html.high-contrast [data-testid='game-card'],
+    html.high-contrast [data-testid='game-filters'],
+    html.high-contrast [data-testid='empty-state'] {
+        background: #000 !important;
+        border-color: #fff !important;
+    }
+
+    html.high-contrast input,
+    html.high-contrast select {
+        background-color: #000 !important;
+        border-color: #fff !important;
+    }
+
+    html.high-contrast svg {
+        color: #fff;
     }
 </style>
