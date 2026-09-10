@@ -220,4 +220,26 @@ test.describe('Accessibility Tests', () => {
       await expect(gameCardSvgs.nth(i)).toHaveAttribute('aria-hidden', 'true');
     }
   });
+
+  test('high-contrast mode should persist across page reloads', async ({ page }) => {
+    await page.goto('/');
+
+    const highContrastToggle = page.getByTestId('high-contrast-toggle');
+    await expect(highContrastToggle).toHaveAttribute('aria-pressed', 'false');
+    await expect(highContrastToggle).toHaveText('High contrast');
+
+    await highContrastToggle.click();
+    await expect(highContrastToggle).toHaveAttribute('aria-pressed', 'true');
+    await expect(highContrastToggle).toHaveText('Standard contrast');
+    await expect(page.locator('html')).toHaveClass(/high-contrast/);
+
+    await page.reload();
+    await expect(page.locator('html')).toHaveClass(/high-contrast/);
+    await expect(page.getByTestId('high-contrast-toggle')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.getByTestId('high-contrast-toggle')).toHaveText('Standard contrast');
+
+    await page.getByTestId('high-contrast-toggle').click();
+    await expect(page.locator('html')).not.toHaveClass(/high-contrast/);
+    await expect(page.getByTestId('high-contrast-toggle')).toHaveAttribute('aria-pressed', 'false');
+  });
 });
